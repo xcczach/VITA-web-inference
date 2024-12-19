@@ -1,7 +1,0 @@
-{
-    "_name_or_path": "whale_audio_mini",
-    "auto_map": {
-      "AutoFeatureExtractor": "processor_whale.WhaleFeatureExtractor"
-    }
-  }
-  
