@@ -1,0 +1,9 @@
+numpy
+torch
+torchaudio
+decord
+flask
+flask_socketio
+cryptography
+transformers
+vllm
