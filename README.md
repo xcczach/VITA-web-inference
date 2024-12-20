@@ -230,7 +230,8 @@ python -m web_demo.web_ability_demo  demo_VITA_ckpt/
 #### 📍 Real-Time Interactive Demo
 
 ```bash
-pip install flask flask-socketio cryptography
+pip install flask flask-socketio cryptography timm
+mv demo_VITA_ckpt/config.json demo_VITA_ckpt/origin_config.json
 python -m web_demo.server --model_path demo_VITA_ckpt --ip 0.0.0.0 --port 8081
 ```
 
