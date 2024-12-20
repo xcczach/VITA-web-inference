@@ -11,7 +11,7 @@
 ---
 
 <p align="center">
-    <img src="./asset/vita_demo.jpg" width="100%" height="100%">
+    <img src="./asset/vita_demo.jpg" width="90%" height="90%">
 </p>
 
 ## 🔥 News
