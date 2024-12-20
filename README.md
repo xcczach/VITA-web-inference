@@ -1,4 +1,4 @@
-# VITA-1.5: Enhancing Vision and Speech Abilities in Multimodal LLMs
+# VITA-1.5: An Open-Source Interactive Multimodal LLM
 
 
 <p align="center">
