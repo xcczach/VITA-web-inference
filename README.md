@@ -207,6 +207,8 @@ pip install -r web_demo/web_demo_requirements.txt
 # Backup a new weight file
 cp -rL  VITA_ckpt/ demo_VITA_ckpt/
 
+mv demo_VITA_ckpt/config.json demo_VITA_ckpt/origin_config.json
+
 cd ./web_demo/vllm_tools
 cp -rf qwen2p5_model_weight_file/*  ../../demo_VITA_ckpt/
 cp -rf vllm_file/*  your_anaconda/envs/vita_demo/lib/python3.10/site-packages/vllm/model_executor/models/
@@ -231,7 +233,6 @@ python -m web_demo.web_ability_demo  demo_VITA_ckpt/
 
 ```bash
 pip install flask flask-socketio cryptography timm
-mv demo_VITA_ckpt/config.json demo_VITA_ckpt/origin_config.json
 python -m web_demo.server --model_path demo_VITA_ckpt --ip 0.0.0.0 --port 8081
 ```
 
