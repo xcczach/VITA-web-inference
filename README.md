@@ -63,7 +63,7 @@ We are excited to present **VITA-1.5**, which incorporates a series of advanceme
 - **VITA-1.5 outperforms professional speech models on ASR benchmarks.**
 
 <p align="center">
-    <img src="./asset/vita_15_audio.png" width="96%" height="96%">
+    <img src="./asset/vita_15_audio_new.jpg" width="96%" height="96%">
 </p>
 
 - **Adding the audio modality has little effect on image and video understanding capability**.
