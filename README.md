@@ -9,7 +9,9 @@
 
 ---
 
-https://github.com/user-attachments/assets/f634c621-8146-4fa2-9248-179f301e9e64
+<p align="center">
+    <img src="./asset/vita_demo.jpg" width="80%" height="80%">
+</p>
 
 
 ## 🔥 News
