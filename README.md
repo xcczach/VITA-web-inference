@@ -7,10 +7,12 @@
 
 <font size=7><div align='center' > [[📖 Paper (Comming Soon)](https://github.com/VITA-MLLM/VITA)] [[🤗 Hugging Face](https://huggingface.co/VITA-MLLM)] [[🍎 VITA-1.0](https://vita-home.github.io/)] [[💬 WeChat (微信)](./asset/wechat.jpg)]</div></font>
 
-
 ---
 
-https://github.com/user-attachments/assets/d84f5576-e893-4a46-8f68-147c327c5d23
+<p align="center">
+    https://github.com/user-attachments/assets/f634c621-8146-4fa2-9248-179f301e9e64
+</p>
+
 
 ## 🔥 News
 * **`2024.12.20`** 🌟 We are excited to introduce the **VITA-1.5**, a more powerful and more real-time version!
