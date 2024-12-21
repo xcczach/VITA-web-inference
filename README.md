@@ -13,6 +13,7 @@
     <img src="./asset/vita_demo.jpg" width="80%" height="80%">
 </p>
 
+<font size=7><div align='center' > [[📽 VITA-1.5 Demo Show. Here We Go!](https://youtu.be/tyi6SVFT5mM?si=fkMQCrwa5fVnmEe7)] </div></font>
 
 ## 🔥 News
 * **`2024.12.20`** 🌟 We are excited to introduce the **VITA-1.5**, a more powerful and more real-time version!
