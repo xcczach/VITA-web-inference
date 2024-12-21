@@ -10,9 +10,7 @@
 
 ---
 
-<p align="center">
-    <img src="./asset/vita_demo.jpg" width="90%" height="90%">
-</p>
+https://github.com/user-attachments/assets/d84f5576-e893-4a46-8f68-147c327c5d23
 
 ## 🔥 News
 * **`2024.12.20`** 🌟 We are excited to introduce the **VITA-1.5**, a more powerful and more real-time version!
