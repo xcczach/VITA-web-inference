@@ -5,7 +5,7 @@
     <img src="./asset/vita_newlog.jpg" width="100%" height="100%">
 </p>
 
-<font size=7><div align='center' > [[📖 Paper (Comming Soon)](https://github.com/VITA-MLLM/VITA)] [[🤗 Hugging Face](https://huggingface.co/VITA-MLLM)] [[🍎 VITA-1.0](https://vita-home.github.io/)] [[💬 WeChat (微信)](./asset/wechat.jpg)]</div></font>
+<font size=7><div align='center' > [[📖 VITA-1.5 Paper (Comming Soon)](https://github.com/VITA-MLLM/VITA)] [[🤗 Hugging Face](https://huggingface.co/VITA-MLLM)] [[🍎 VITA-1.0](https://vita-home.github.io/)] [[💬 WeChat (微信)](./asset/wechat.jpg)]</div></font>
 
 ---
 
