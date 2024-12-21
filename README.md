@@ -9,9 +9,7 @@
 
 ---
 
-<p align="center">
-    https://github.com/user-attachments/assets/f634c621-8146-4fa2-9248-179f301e9e64
-</p>
+https://github.com/user-attachments/assets/f634c621-8146-4fa2-9248-179f301e9e64
 
 
 ## 🔥 News
