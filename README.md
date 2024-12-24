@@ -24,17 +24,29 @@
 ## Contents <!-- omit in toc -->
 
 
-- [VITA-1.5 Overview](#-vita-15-overview)
-- [Experimental Results](#-experimental-results)
-- [Training](#-training)
-  - [Requirements and Installation](#requirements-and-installation)
-  - [Data Preparation](#data-preparation)
-  - [Continual Training](#continual-training)
-- [Inference](#-inference)
-  - [Quick Start](#quick-start)
-  - [Demo](#demo)
-    - [Basic Demo](#-basic-demo)
-    - [Real-Time Interactive Demo](#-real-time-interactive-demo)
+- [VITA-1.5: An Open-Source Interactive Multimodal LLM](#vita-15-an-open-source-interactive-multimodal-llm)
+  - [🔥 News](#-news)
+  - [👀 VITA-1.5 Overview](#-vita-15-overview)
+    - [🌟 What’s New in VITA-1.5?](#-whats-new-in-vita-15)
+  - [📈 Experimental Results](#-experimental-results)
+  - [⭐ Training](#-training)
+    - [Requirements and Installation](#requirements-and-installation)
+    - [Data Preparation](#data-preparation)
+    - [Continual Training](#continual-training)
+  - [📐 Inference](#-inference)
+    - [Quick Start](#quick-start)
+    - [Demo](#demo)
+      - [📍 Basic Demo](#-basic-demo)
+      - [📍 Real-Time Interactive Demo](#-real-time-interactive-demo)
+  - [📏Evaluating on MLLM Benchmarks](#evaluating-on-mllm-benchmarks)
+    - [VLMEvalkit](#vlmevalkit)
+    - [Video-MME](#video-mme)
+      - [Data Preparation](#data-preparation-1)
+      - [Evaluation](#evaluation)
+  - [✒️ Citation](#️-citation)
+  - [📣 Statement](#-statement)
+  - [📜 Related Works](#-related-works)
+  - [👍 Acknowledgement](#-acknowledgement)
 
 
 
@@ -233,8 +245,16 @@ python -m web_demo.web_ability_demo  demo_VITA_ckpt/
 
 #### 📍 Real-Time Interactive Demo
 
+To run the real-time interactive demo, you need to make the following preparations:
+
+- Prepare a VAD (Voice Activity Detection) module. 
+You can choose to download [silero_vad.onnx](https://github.com/snakers4/silero-vad/tree/v4.0/files) and [silero_vad.jit](https://github.com/snakers4/silero-vad/tree/v4.0/files), and place these files in the `./web_demo/wakeup_and_vad/resource/` directory.
+
+- For a better real-time interactive experience, you need to set `max_dynamic_patch` to 1 in `demo_VITA_ckpt/config.json`. 
+When you run the basic demo, you can set it to the default value of 12 to enhance the model's visual capabilities.
+
 ```bash
-pip install flask flask-socketio cryptography timm
+pip install flask==3.1.0 flask-socketio==5.5.0 cryptography==44.0.0 timm==1.0.12
 python -m web_demo.server --model_path demo_VITA_ckpt --ip 0.0.0.0 --port 8081
 ```
 
