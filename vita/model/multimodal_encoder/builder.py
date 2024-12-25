@@ -1,13 +1,14 @@
 import os
 
 import yaml
+import torch
+from transformers.utils.hub import get_file_from_repo
 
 from .clip.clip_encoder import CLIPVisionTower
 from .eva_clip.eva_clip_encoder import EvaClipVisionTower
 from .internvit.internvit_encoder import InternViTVisionTower
 from .siglip.siglip_encoder import SiglipVisionTower, SiglipVisionTowerS2
 from .whale.init_model import init_model
-import torch
 
 
 def build_vision_tower(vision_tower_cfg, **kwargs):
@@ -43,10 +44,10 @@ def build_vision_tower(vision_tower_cfg, **kwargs):
 
 
 def build_audio_encoder(audio_encoder_config, **kwargs):
-    with open(audio_encoder_config.mm_audio_encoder + "/train.yaml", "r") as fin:
+    with open(get_file_from_repo(audio_encoder_config.mm_audio_encoder, "train.yaml"), "r") as fin:
         configs = yaml.load(fin, Loader=yaml.FullLoader)
 
-    configs["cmvn_file"] = audio_encoder_config.mm_audio_encoder + "/global_cmvn"
+    configs["cmvn_file"] = get_file_from_repo(audio_encoder_config.mm_audio_encoder, "global_cmvn")
 
     configs["model_conf"]["freeze_encoder"] = getattr(
         audio_encoder_config, "freeze_audio_encoder", True
@@ -63,7 +64,7 @@ def build_audio_encoder(audio_encoder_config, **kwargs):
 
     audio_encoder = init_model(configs)
 
-    checkpoint = torch.load(audio_encoder_config.mm_audio_encoder + "/final.pt", map_location="cpu")
+    checkpoint = torch.load(get_file_from_repo(audio_encoder_config.mm_audio_encoder, "final.pt"), map_location="cpu")
     model_dict = audio_encoder.state_dict()
     for key in model_dict.keys():
         if key in checkpoint.keys():

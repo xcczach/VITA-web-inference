@@ -39,7 +39,7 @@
       - [📍 Basic Demo](#-basic-demo)
       - [📍 Real-Time Interactive Demo](#-real-time-interactive-demo)
   - [📏Evaluating on MLLM Benchmarks](#evaluating-on-mllm-benchmarks)
-    - [VLMEvalkit](#vlmevalkit)
+    - [VLMEvalKit](#vlmevalkit)
     - [Video-MME](#video-mme)
       - [Data Preparation](#data-preparation-1)
       - [Evaluation](#evaluation)
@@ -180,7 +180,7 @@ bash script/train/finetuneTaskNeg_qwen_nodes.sh ${OUTPUT_DIR}
 ```
 CUDA_VISIBLE_DEVICES=2 python video_audio_demo.py \
     --model_path [vita/path] \
-    --image_path asset/vita_log2.png \
+    --image_path asset/vita_newlog.jpg \
     --model_type qwen2p5_instruct \
     --conv_mode qwen2p5_instruct \
     --question "Describe this images."
@@ -190,7 +190,7 @@ CUDA_VISIBLE_DEVICES=2 python video_audio_demo.py \
 ```
 CUDA_VISIBLE_DEVICES=4 python video_audio_demo.py \
     --model_path [vita/path] \
-    --image_path asset/vita_log2.png \
+    --image_path asset/vita_newlog.png \
     --model_type qwen2p5_instruct \
     --conv_mode qwen2p5_instruct \
     --audio_path asset/q1.wav
@@ -200,7 +200,7 @@ CUDA_VISIBLE_DEVICES=4 python video_audio_demo.py \
 ```
 CUDA_VISIBLE_DEVICES=4 python video_audio_demo.py \
     --model_path [vita/path] \
-    --image_path asset/vita_log2.png \
+    --image_path asset/vita_newlog.png \
     --model_type qwen2p5_instruct \
     --conv_mode qwen2p5_instruct \
     --audio_path asset/q2.wav
@@ -260,7 +260,7 @@ python -m web_demo.server --model_path demo_VITA_ckpt --ip 0.0.0.0 --port 8081
 
 
 ## 📏Evaluating on MLLM Benchmarks
-### [VLMEvalkit](https://github.com/open-compass/VLMEvalKit)
+### [VLMEvalKit](https://github.com/open-compass/VLMEvalKit)
 Modify the model path of `vita_qwen2` in `VLMEvalKit/vlmeval/config.py`
 ```
 vita_series = { 
@@ -269,13 +269,19 @@ vita_series = {
 }
 ```
 
-Follow the [instuctions in VLMEvalkit](https://github.com/open-compass/VLMEvalKit/blob/main/docs/en/Quickstart.md) to set the GPT as the judge model.
+Follow the [instuctions in VLMEvalKit](https://github.com/open-compass/VLMEvalKit/blob/main/docs/en/Quickstart.md) to set the GPT as the judge model.
 
-If the openai api are not available, you can use a local model as the judge. In our experiments, we find that [Qwen1.5-1.8B-Chat](https://huggingface.co/Qwen/Qwen1.5-1.8B-Chat) judge can work well compared to GPT-4, except in MM-Vet. To start the judge::
+If the openai api are not available, you can use a local model as the judge. In our experiments, we find that [Qwen1.5-1.8B-Chat](https://huggingface.co/Qwen/Qwen1.5-1.8B-Chat) judge can work well compared to GPT-4, except in MM-Vet. To start the judge:
 ```
 CUDA_VISIBLE_DEVICES=0 lmdeploy serve api_server /mnt/cfs/lhj/model_weights/Qwen1.5-1.8B-Chat --server-port 23333
 ```
-Then, evaluating these benchmarks:
+Then configure the `.env` file in the `VLMEvalKit` folder:
+```
+OPENAI_API_KEY=sk-123456
+OPENAI_API_BASE=http://0.0.0.0:23333/v1/chat/completions
+LOCAL_LLM=/mnt/cfs/lhj/model_weights/Qwen1.5-1.8B-Chat
+```
+Evaluating on these benchmarks:
 ```
 CUDA_VISIBLE_DEVICES=0 python run.py --data MMBench_TEST_EN_V11 MMBench_TEST_CN_V11 MMStar MMMU_DEV_VAL MathVista_MINI HallusionBench AI2D_TEST OCRBench MMVet MME --model vita_qwen2 --verbose
 ```
