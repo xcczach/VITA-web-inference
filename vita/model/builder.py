@@ -268,7 +268,7 @@ def load_pretrained_model(
     #                k.startswith('model.audio_encoder.')})
     # import pdb; pdb.set_trace()
 
-    vision_tower.to(device=device, dtype=torch.float16)
+    vision_tower.to(dtype=torch.float16)
     image_processor = vision_tower.image_processor
 
     #import pdb; pdb.set_trace()

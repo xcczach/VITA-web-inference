@@ -8,7 +8,7 @@ from ...smp import *
 from ...dataset import DATASET_TYPE
 import copy
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../../')))
-from vita.util.data_utils_video_audio_neg_patch import dynamic_preprocess
+from vita.util.data_utils_video_audio_patch import dynamic_preprocess
 
 class VITA(BaseModel):
     INSTALL_REQ = True
@@ -190,16 +190,25 @@ class VITA(BaseModel):
         audios = dict()
         audios['audios'] = audio.half().cuda()
         audios['lengths'] = audio_length.half().cuda()
+        audio_for_llm_lens = 60
+        audio_for_llm_lens = torch.unsqueeze(torch.tensor(audio_for_llm_lens), dim=0)
+        audios["lengths_for_llm"] = audio_for_llm_lens.cuda()
+
+        sf_masks = torch.tensor([0]*len(image_tensor)).cuda()
         cont = self.model.generate(
             input_ids,
             images=image_tensor,
             audios=audios,
+            sf_masks=sf_masks,
             do_sample=False,
             temperature=0.01,
-            max_new_tokens=512,
+            max_new_tokens=2048,
             stopping_criteria=[stopping_criteria],
         )
         input_token_len = input_ids.shape[1]
         cont = cont[:, input_token_len:]
         text_outputs = self.tokenizer.batch_decode(cont, skip_special_tokens=True)[0]
-        return text_outputs
+        if '<1>' in text_outputs or '<2>' in text_outputs or '<3>' in text_outputs:
+            return text_outputs[1:]
+        else:
+            return text_outputs

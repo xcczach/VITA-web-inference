@@ -259,6 +259,7 @@ class VITAMixtralForCausalLM(MixtralForCausalLM, VITAMetaForCausalLM):
         output_hidden_states: Optional[bool] = None,
         images: Optional[torch.FloatTensor] = None,
         audios: Optional[dict] = None,
+        sf_masks: Optional[torch.Tensor] = None,
         output_router_logits: Optional[bool] = None,
         return_dict: Optional[bool] = None,
     ) -> Union[Tuple, CausalLMOutputWithPast]:
@@ -271,7 +272,7 @@ class VITAMixtralForCausalLM(MixtralForCausalLM, VITAMetaForCausalLM):
                 inputs_embeds,
                 labels,
             ) = self.prepare_inputs_labels_for_multimodal(
-                input_ids, position_ids, attention_mask, past_key_values, labels, images, audios
+                input_ids, position_ids, attention_mask, past_key_values, labels, images, audios, sf_masks
             )
 
         return super().forward(
