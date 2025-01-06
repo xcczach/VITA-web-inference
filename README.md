@@ -1,4 +1,4 @@
-# VITA-1.5: An Open-Source Interactive Multimodal LLM
+# VITA-1.5: Towards GPT-4o Level Real-Time Vision and Speech Interaction
 
 
 <p align="center">
