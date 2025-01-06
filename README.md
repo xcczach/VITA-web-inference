@@ -340,6 +340,13 @@ python parse_answer.py --video_types "s,m,l" --result_dir qa_w_sub
 If you find our work helpful for your research, please consider citing our work.   
 
 ```bibtex
+@article{fu2025vita,
+  title={VITA-1.5: Towards gpt-4o level real-time vision and speech interaction},
+  author={Fu, Chaoyou and Lin, Haojia and Wang, Xiong and Zhang, Yi-Fan and Shen, Yunhang and Liu, Xiaoyu and Li, Yangze and Long, Zuwei and Gao, Heting and others},
+  journal={arXiv preprint arXiv:2501.01957},
+  year={2025}
+}
+
 @article{fu2024vita,
   title={Vita: Towards open-source interactive omni multimodal llm},
   author={Fu, Chaoyou and Lin, Haojia and Long, Zuwei and Shen, Yunhang and Zhao, Meng and Zhang, Yifan and Wang, Xiong and Yin, Di and Ma, Long and Zheng, Xiawu and others},
