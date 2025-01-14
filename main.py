@@ -222,7 +222,7 @@ async def inference(request: Request) -> StreamingResponse:
     if outputs.endswith(stop_str):
         outputs = outputs[: -len(stop_str)]
     outputs = outputs.strip()
-    # print(outputs)
+    print(outputs)
     llm_embedding = model.get_input_embeddings()
     llm_resounse = replace_equation(remove_special_characters(outputs))
     segs = []

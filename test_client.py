@@ -5,10 +5,13 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--port", type=int, default=9234)
+parser.add_argument("--zh-sample", action="store_true")
 args = parser.parse_args()
 
 url = f"http://localhost:{args.port}/vita"
-audio_data, sample_rate = sf.read("en_sample.wav")
+audio_data, sample_rate = sf.read(
+    "zh_sample.wav" if args.zh_sample else "en_sample.wav"
+)
 data = {"sample_rate": sample_rate, "audio_data": audio_data.tolist()}
 
 response = requests.post(url, json=data, stream=True)
