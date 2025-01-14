@@ -41,6 +41,8 @@ from vita.model.vita_tts.decoder.ticodec.vqvae_tester import VqvaeTester
 import setproctitle
 from vita.model.vita_tts.decoder.llm2tts import llm2TTS
 
+import re
+import torchaudio
 
 tokenizer = None
 model = None
@@ -50,15 +52,104 @@ tts = None
 model_type = "qwen2p5_instruct"
 
 
+def remove_special_characters(input_str):
+    # Remove special tokens
+    special_tokens = ["☞", "☟", "☜", "<unk>", "<|im_end|>"]
+    for token in special_tokens:
+        input_str = input_str.replace(token, "")
+    return input_str
+
+
+def replace_equation(sentence):
+    special_notations = {
+        "sin": " sine ",
+        "cos": " cosine ",
+        "tan": " tangent ",
+        "cot": " cotangent ",
+        "sec": " secant ",
+        "csc": " cosecant ",
+        "log": " logarithm ",
+        "exp": "e^",
+        "sqrt": "根号 ",
+        "abs": "绝对值 ",
+    }
+
+    special_operators = {
+        "+": "加",
+        "-": "减",
+        "*": "乘",
+        "/": "除",
+        "=": "等于",
+        "!=": "不等于",
+        ">": "大于",
+        "<": "小于",
+        ">=": "大于等于",
+        "<=": "小于等于",
+    }
+
+    greek_letters = {
+        "α": "alpha ",
+        "β": "beta ",
+        "γ": "gamma ",
+        "δ": "delta ",
+        "ε": "epsilon ",
+        "ζ": "zeta ",
+        "η": "eta ",
+        "θ": "theta ",
+        "ι": "iota ",
+        "κ": "kappa ",
+        "λ": "lambda ",
+        "μ": "mu ",
+        "ν": "nu ",
+        "ξ": "xi ",
+        "ο": "omicron ",
+        "π": "派 ",
+        "ρ": "rho ",
+        "σ": "sigma ",
+        "τ": "tau ",
+        "υ": "upsilon ",
+        "φ": "phi ",
+        "χ": "chi ",
+        "ψ": "psi ",
+        "ω": "omega ",
+    }
+
+    sentence = sentence.replace("**", " ")
+
+    sentence = re.sub(r"(?<![\d)])-(\d+)", r"负\1", sentence)
+
+    for key in special_notations:
+        sentence = sentence.replace(key, special_notations[key])
+    for key in special_operators:
+        sentence = sentence.replace(key, special_operators[key])
+    for key in greek_letters:
+        sentence = sentence.replace(key, greek_letters[key])
+
+    sentence = re.sub(r"\(?(\d+)\)?\((\d+)\)", r"\1乘\2", sentence)
+    sentence = re.sub(r"\(?(\w+)\)?\^\(?(\w+)\)?", r"\1的\2次方", sentence)
+
+    return sentence
+
+
+def split_into_sentences(text):
+    sentence_endings = re.compile(r"[，。？\n！？、,?.!]")
+    sentences = sentence_endings.split(text)
+    return [sentence.strip() for sentence in sentences if sentence.strip()]
+
+
 async def inference(request: Request) -> StreamingResponse:
     data = await request.json()
     sample_rate = data["sample_rate"]
     audio_data = data["audio_data"]
 
+    target_sample_rate = 24000
     conv_mode = "qwen2p5_instruct"
     temperature = 0.01
     top_p = None
     num_beams = 1
+    decoder_topk = 2
+    codec_chunk_size = 40
+    codec_padding_size = 10
 
     with tempfile.NamedTemporaryFile(suffix=".wav") as temp_audio_file:
         temp_audio_path = temp_audio_file.name
@@ -122,19 +213,45 @@ async def inference(request: Request) -> StreamingResponse:
             (input_ids != output_ids[:, :input_token_len]).sum().item()
         )
         if n_diff_input_output > 0:
-            print(
-                f"[Warning] {n_diff_input_output} output_ids are not the same as the input_ids"
-            )
+            # print(
+            #     f"[Warning] {n_diff_input_output} output_ids are not the same as the input_ids"
+            # )
             output_ids = output_ids[:, input_token_len:]
     outputs = tokenizer.batch_decode(output_ids, skip_special_tokens=False)[0]
     outputs = outputs.strip()
     if outputs.endswith(stop_str):
         outputs = outputs[: -len(stop_str)]
     outputs = outputs.strip()
-    print(outputs)
+    # print(outputs)
+    llm_embedding = model.get_input_embeddings()
+    llm_resounse = replace_equation(remove_special_characters(outputs))
+    segs = []
+    for idx, text in enumerate(split_into_sentences(llm_resounse)):
+        embeddings = llm_embedding(torch.tensor(tokenizer.encode(text)).to(device))
+        for seg in tts.run(
+            embeddings.reshape(-1, 896).unsqueeze(0),
+            decoder_topk,
+            None,
+            codec_chunk_size,
+            codec_padding_size,
+        ):
+            if idx == 0:
+                try:
+                    split_idx = torch.nonzero(seg.abs() > 0.03, as_tuple=True)[-1][0]
+                    seg = seg[:, :, split_idx:]
+                except:
+                    # print("Do not need to split")
+                    pass
 
+            if seg is not None and len(seg) > 0:
+                seg = seg.to(torch.float32).cpu().numpy().squeeze()
+                # print(f"seg shape: {seg.shape}")
+                segs.append(seg)
+
+    result_arr = torch.tensor(np.concatenate(segs, axis=0)).unsqueeze(0)
+    # print(f"result_arr shape: {result_arr.shape}")
     result = io.BytesIO()
-    # torchaudio.save(result, result_arr, target_sample_rate, format="wav")
+    torchaudio.save(result, result_arr, target_sample_rate, format="wav")
     result.seek(0)
     return StreamingResponse(result, media_type="application/octet-stream")
 
