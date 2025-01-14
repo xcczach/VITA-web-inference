@@ -59,7 +59,9 @@ def _get_rawvideo_dec(
 
     fps = vreader.get_avg_fps()
     f_start = 0 if start_time is None else int(start_time * fps)
-    f_end = int(min(1000000000 if end_time is None else end_time * fps, len(vreader) - 1))
+    f_end = int(
+        min(1000000000 if end_time is None else end_time * fps, len(vreader) - 1)
+    )
     num_frames = f_end - f_start + 1
     if num_frames > 0:
         # T x 3 x H x W
@@ -69,16 +71,20 @@ def _get_rawvideo_dec(
         all_pos = list(range(f_start, f_end + 1, t_stride))
         if len(all_pos) > max_frames:
             sample_pos = [
-                all_pos[_] for _ in np.linspace(0, len(all_pos) - 1, num=max_frames, dtype=int)
+                all_pos[_]
+                for _ in np.linspace(0, len(all_pos) - 1, num=max_frames, dtype=int)
             ]
         elif len(all_pos) < min_frames:
             sample_pos = [
-                all_pos[_] for _ in np.linspace(0, len(all_pos) - 1, num=min_frames, dtype=int)
+                all_pos[_]
+                for _ in np.linspace(0, len(all_pos) - 1, num=min_frames, dtype=int)
             ]
         else:
             sample_pos = all_pos
 
-        patch_images = [Image.fromarray(f) for f in vreader.get_batch(sample_pos).asnumpy()]
+        patch_images = [
+            Image.fromarray(f) for f in vreader.get_batch(sample_pos).asnumpy()
+        ]
 
         if image_aspect_ratio == "pad":
 
@@ -96,7 +102,9 @@ def _get_rawvideo_dec(
                     return result
 
             patch_images = [
-                expand2square(i, tuple(int(x * 255) for x in image_processor.image_mean))
+                expand2square(
+                    i, tuple(int(x * 255) for x in image_processor.image_mean)
+                )
                 for i in patch_images
             ]
             patch_images = [
@@ -122,7 +130,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process model and video paths.")
 
     # Add arguments
-    parser.add_argument("--model_path", type=str, required=True, help="Path to the model directory")
+    parser.add_argument(
+        "--model_path", type=str, required=True, help="Path to the model directory"
+    )
     parser.add_argument("--model_base", type=str, default=None)
     parser.add_argument("--video_path", type=str, default=None)
     parser.add_argument("--image_path", type=str, default=None)
@@ -130,7 +140,7 @@ if __name__ == "__main__":
     parser.add_argument("--model_type", type=str, default="mixtral-8x7b")
     parser.add_argument("--conv_mode", type=str, default="mixtral_two")
     parser.add_argument("--question", type=str, default="")
-    parser.add_argument("--frameCat", action='store_true')
+    parser.add_argument("--frameCat", action="store_true")
 
     # Parse the arguments
     args = parser.parse_args()
@@ -142,7 +152,9 @@ if __name__ == "__main__":
     image_path = args.image_path
     audio_path = args.audio_path
     qs = args.question
-    assert (audio_path is None) != (qs == ""), "Exactly one of audio_path or qs must be non-None"
+    assert (audio_path is None) != (
+        qs == ""
+    ), "Exactly one of audio_path or qs must be non-None"
     conv_mode = args.conv_mode
 
     if args.frameCat:
@@ -222,9 +234,18 @@ if __name__ == "__main__":
     elif image_path is not None:
         image = Image.open(image_path).convert("RGB")
         if args.frameCat:
-            image, p_num = dynamic_preprocess(image, min_num=2, max_num=12, image_size=448, use_thumbnail=True, img_mean=image_processor.image_mean)
+            image, p_num = dynamic_preprocess(
+                image,
+                min_num=2,
+                max_num=12,
+                image_size=448,
+                use_thumbnail=True,
+                img_mean=image_processor.image_mean,
+            )
         else:
-            image, p_num = dynamic_preprocess(image, min_num=1, max_num=12, image_size=448, use_thumbnail=True)
+            image, p_num = dynamic_preprocess(
+                image, min_num=1, max_num=12, image_size=448, use_thumbnail=True
+            )
         assert len(p_num) == 1
         image_tensor = model.process_images(image, model.config).to(
             dtype=model.dtype, device="cuda"
@@ -235,7 +256,9 @@ if __name__ == "__main__":
             qs = DEFAULT_IMAGE_TOKEN * p_num[0] + "\n" + qs
         modality = "image"
     else:
-        image_tensor = torch.zeros((1, 3, 448, 448)).to(dtype=model.dtype, device="cuda")
+        image_tensor = torch.zeros((1, 3, 448, 448)).to(
+            dtype=model.dtype, device="cuda"
+        )
         if audio_path:
             qs = qs + DEFAULT_AUDIO_TOKEN
         modality = "lang"
@@ -247,13 +270,17 @@ if __name__ == "__main__":
 
     if audio_path:
         input_ids = (
-            tokenizer_image_audio_token(prompt, tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt")
+            tokenizer_image_audio_token(
+                prompt, tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt"
+            )
             .unsqueeze(0)
             .cuda()
         )
     else:
         input_ids = (
-            tokenizer_image_token(prompt, tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt")
+            tokenizer_image_token(
+                prompt, tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt"
+            )
             .unsqueeze(0)
             .cuda()
         )
@@ -264,6 +291,13 @@ if __name__ == "__main__":
 
     start_time = time.time()
     with torch.inference_mode():
+        print(
+            "Devices: ",
+            model.device,
+            image_tensor.device,
+            audios["audios"].device,
+            sep=", ",
+        )
         output_ids = model.generate(
             input_ids,
             images=image_tensor,
@@ -277,15 +311,19 @@ if __name__ == "__main__":
             max_new_tokens=1024,
             use_cache=True,
             stopping_criteria=[stopping_criteria],
-            shared_v_pid_stride=None#2#16#8#4#1#None,
+            shared_v_pid_stride=None,  # 2#16#8#4#1#None,
         )
     infer_time = time.time() - start_time
     output_ids = output_ids.sequences
     input_token_len = input_ids.shape[1]
     if args.model_type == "mixtral-8x7b":
-        n_diff_input_output = (input_ids != output_ids[:, :input_token_len]).sum().item()
+        n_diff_input_output = (
+            (input_ids != output_ids[:, :input_token_len]).sum().item()
+        )
         if n_diff_input_output > 0:
-            print(f"[Warning] {n_diff_input_output} output_ids are not the same as the input_ids")
+            print(
+                f"[Warning] {n_diff_input_output} output_ids are not the same as the input_ids"
+            )
             output_ids = output_ids[:, input_token_len:]
     outputs = tokenizer.batch_decode(output_ids, skip_special_tokens=False)[0]
 
@@ -295,5 +333,3 @@ if __name__ == "__main__":
     outputs = outputs.strip()
     print(outputs)
     print(f"Time consume: {infer_time}")
-
-
