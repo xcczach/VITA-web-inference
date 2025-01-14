@@ -19,6 +19,6 @@ Start the server:
 python main.py
 ```
 
-The API will be available at `http://localhost:9234/miniomni` by default. You can change the port with `--port` and the API name with `--api-name`.
+The API will be available at `http://localhost:9234/vita` by default. You can change the port with `--port` and the API name with `--api-name`.
 
 `test_client.py` provides a sample call to the API.
