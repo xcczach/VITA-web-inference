@@ -275,9 +275,11 @@ def init():
 
 
 def hangup():
-    global audio_tokenizer, generator
-    del audio_tokenizer
-    del generator
+    global model, tokenizer, audio_processor, tts
+    del model
+    del tokenizer
+    del audio_processor
+    del tts
     torch.cuda.empty_cache()
 
 
